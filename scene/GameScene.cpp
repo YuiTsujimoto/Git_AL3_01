@@ -6,7 +6,11 @@ using namespace DirectX;
 
 GameScene::GameScene() {}
 
-GameScene::~GameScene() {}
+GameScene::~GameScene() { 
+	
+	delete model_; 
+
+}
 
 void GameScene::Initialize() {
 
@@ -14,9 +18,34 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
+
+	textureHandle_ = TextureManager::Load("mario.jpg");
+
+	model_ = Model::Create();
+
+	worldTransform_.translation_ = {10.0f,10.0f,10.0f,};
+	worldTransform_.rotation_ = {XMConvertToRadians(45.0f), XMConvertToRadians(45.0f), 0.0f};
+	worldTransform_.scale_ = {5.0f, 5.0f, 5.0f};
+
+	worldTransform_.Initialize();
+	viewProjection_.Initialize();
+
 }
 
-void GameScene::Update() {}
+void GameScene::Update() {
+
+	debugText_->SetPos(50, 50);
+	debugText_->Printf("translation:(%f,%f,%f)", 10.0f, 10.0f, 10.0f);
+
+	debugText_->SetPos(50, 70);
+	debugText_->Printf(
+	  "scale:(%f,%f,%f)", XMConvertToRadians(45.0f), XMConvertToRadians(45.0f), 0.0f);
+
+	debugText_->SetPos(50, 90);
+	debugText_->Printf("rotation:(%f,%f,%f)", 5.0f, 5.0f, 5.0f);
+
+
+}
 
 void GameScene::Draw() {
 
@@ -46,7 +75,11 @@ void GameScene::Draw() {
 	/// </summary>
 
 	// 3Dオブジェクト描画後処理
+
+	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+
 	Model::PostDraw();
+	
 #pragma endregion
 
 #pragma region 前景スプライト描画
